@@ -17,3 +17,5 @@ You will need to modify the PLL to use with Altera for example
 All files compile, need to udate CRT.vhd to actually drive a test
 
 pattern such as a blank screen
+
+Schematic overview coming soon.
