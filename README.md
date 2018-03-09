@@ -9,7 +9,7 @@ Use GTKWave to view resulting simulation
 # Notes
 Currently intended to be used with IceStorm/IceCube 2
 
-The top entity is my_clock. Admittedly this is not the greates design. Perhaps I will fix that.
+The top entity is my_clock. Admittedly this is not the greatest design. Perhaps I will fix that.
 
 You will need to modify the PLL to use with Altera for example
 
