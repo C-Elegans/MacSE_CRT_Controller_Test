@@ -56,6 +56,9 @@ port map(
 	-- signal to begin the next frame
 	newFrame <= '1' when count = std_logic_vector(to_unsigned(4,count'length))
 			else '0';
+        h_sync <= '0';
+        v_sync <= '0';
+        video <= '0';
 
 	process(dot_clock)
 	begin
