@@ -3,3 +3,4 @@ Simulate/*
 *.vcd
 *.ghw
 top_tb
+*.vim
