@@ -3,12 +3,10 @@ USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.STD_LOGIC_ARITH.ALL;
 USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-entity my_clock is
-port ( sys_clock	:	out std_logic;
-	reset		:	out std_logic);
-end entity my_clock;
+entity top_tb is
+end entity top_tb;
 
-architecture behavior of my_clock is 
+architecture behavior of top_tb is 
 
 signal h_sync_top	:	std_logic;
 signal v_sync_top	:	std_logic;
@@ -23,6 +21,7 @@ port(
 	video		: OUT STD_LOGIC);
 end component;
 
+signal reset : std_logic;
 begin
 	-- drive CRT with clock here during simulation
 	CRT_INST: CRT
