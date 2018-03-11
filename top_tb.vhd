@@ -31,14 +31,13 @@ begin
 		v_sync => v_sync_top,
 		video  => video_top);
 	
-    process
-        begin
+	process
+	begin
 
-        -- generate clock
-          reference_clock <= '0', '1' after 64 ns;
-          wait for 128 ns;
-         end process; 
-         -- following statement executes only once
-reset <= '1', '0' after 75 ns;
+		-- generate clock
+		reference_clock <= '0', '1' after 64 ns;
+		wait for 128 ns;
+	end process; 
+	-- following statement executes only once
+	reset <= '1', '0' after 75 ns;
 end architecture behavior;
-    								  

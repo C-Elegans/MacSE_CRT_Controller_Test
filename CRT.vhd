@@ -11,7 +11,7 @@ ENTITY CRT is
 		h_offset	: integer := 14;
 		h_sync_len	: integer := 288;
 		h_vid_offset	: integer := 192;
-		h_vid_length	:integer := 512;
+		h_vid_length	: integer := 512;
 
 	-- 	Vertical Parameters
 		v_pixels	: integer := 370;
@@ -31,11 +31,10 @@ ARCHITECTURE behavior of CRT IS
 component MaceSeCRT_PLL	-- fix/update this name
 
 port(
-      REFERENCECLK: in std_logic;
-      RESET: in std_logic;
-      PLLOUTCORE: out std_logic;
-      PLLOUTGLOBAL: out std_logic
-    );
+	REFERENCECLK: in std_logic;
+	RESET: in std_logic;
+	PLLOUTCORE: out std_logic;
+	PLLOUTGLOBAL: out std_logic);
 end component;
 
 signal	dot_clock:	std_logic;
@@ -48,22 +47,23 @@ begin
 
 	MaceSeCRT_PLL_inst	: MaceSeCRT_PLL	-- Fix/Update this
 port map(
-          REFERENCECLK => CLK_IN,
-          PLLOUTCORE => dot_clock,
-          PLLOUTGLOBAL => outglob,
-          RESET => outres
-        );
+	REFERENCECLK => CLK_IN,
+	PLLOUTCORE => dot_clock,
+	PLLOUTGLOBAL => outglob,
+	RESET => outres);
+
 	-- signal to begin the next frame
 	newFrame <= '1' when count = std_logic_vector(to_unsigned(4,count'length))
 			else '0';
-        h_sync <= '0';
-        v_sync <= '0';
-        video <= '0';
+
+	h_sync <= '0';
+	v_sync <= '0';
+	video <= '0';
 
 	process(dot_clock)
 	begin
 		if (rising_edge(dot_clock)) then
-		if(newFrame = '1')then count <= X"00000"; end if;
+			if(newFrame = '1')then count <= X"00000"; end if;
 			count <= count + 1;
 		end if;
 	end process;
