@@ -13,4 +13,3 @@ clean:
 	rm -rf Simulate
 	rm -f $(TOP_ENTITY).ghw
 	rm -f e~$(TOP_ENTITY).o
-	rm -f $(TOP_ENTITY).vhd
