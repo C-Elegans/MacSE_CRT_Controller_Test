@@ -11,6 +11,6 @@ compile:
 
 clean:
 	rm -rf Simulate
-	rm $(TOP_ENTITY).ghw
-	rm e~$(TOP_ENTITY).o
-	rm $(TOP_ENTITY)
+	rm -f $(TOP_ENTITY).ghw
+	rm -f e~$(TOP_ENTITY).o
+	rm -f $(TOP_ENTITY).vhd
