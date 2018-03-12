@@ -1,4 +1,6 @@
 Simulate/*
+*.gtkw
+*.swp
 *.o
 *.vcd
 *.ghw

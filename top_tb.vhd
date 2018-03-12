@@ -35,8 +35,8 @@ begin
 	begin
 
 		-- generate clock
-		reference_clock <= '0', '1' after 64 ns;
-		wait for 128 ns;
+		reference_clock <= '0', '1' after 32 ns;
+		wait for 64 ns;
 	end process; 
 	-- following statement executes only once
 	reset <= '1', '0' after 75 ns;
