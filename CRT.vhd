@@ -90,7 +90,7 @@ port map(
 			then H_COUNT <= H_COUNT + 1;
 			else
 				H_COUNT <= x"0001";
-				if(count < 260480) then
+				if(V_COUNT < v_pixels) then
 					V_COUNT <= V_COUNT + 1;
 				end if;
 			end if;
