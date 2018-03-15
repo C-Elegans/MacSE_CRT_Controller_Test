@@ -1,0 +1,13 @@
+[options]
+mode prove
+depth 10
+
+[engines]
+abc pdr
+
+[script]
+read_verilog -formal crt.v
+prep -top CRT
+
+[files]
+crt.v
