@@ -4,7 +4,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.STD_LOGIC_ARITH.ALL;
 USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-ENTITY CRT is 
+ENTITY CRT is
 	GENERIC(
 	--	Horizontal Parameters
 		h_pixels	: integer := 704; -- horizontal length
@@ -60,7 +60,7 @@ port map(
 	RESET => outres);
 
 	-- signal to begin the next frame
-	newFrame	<= '1' when count = std_logic_vector(to_unsigned(8,count'length))
+	newFrame	<= '1' when count = "0000" & X"08"
 				else '0';
 
 	h_sync		<= '0' when (H_COUNT <= (h_vid_offset + h_vid_after_length) and H_COUNT >= (h_offset+1))
@@ -72,34 +72,29 @@ port map(
 	v_sync		<= '0' when (V_COUNT >= x"1" and V_COUNT <= vid_offset)	
 				else '1';
 
-	--h_sync <= '0';
-	--v_sync <= '0';
-	--video <= '0';
 
 	process(dot_clock)
 	begin
 		if (rising_edge(dot_clock)) then
-
-			if(count < total_dots)
-			then count <= count + 1;
-			else 
-			count <= X"00001";
-			V_COUNT <= x"0001";
+			-- If we've sent all the pixels in the frame,
+			-- reset counter
+			if(count < total_dots) then
+				count <= count + 1;
+			else
+				count <= X"00001";
+				V_COUNT <= x"0001";
 			end if;
 
-			if(H_COUNT < h_pixels)	-- we've scanned 704 horizontal dots -- 02c0
+			-- we've scanned 704 horizontal dots -- 02c0
+			if(H_COUNT < h_pixels)	
 			then H_COUNT <= H_COUNT + 1;
-			else 
-			H_COUNT <= x"0001";
-				if(count < 260480)
-				then V_COUNT <= V_COUNT + 1;
+			else
+				H_COUNT <= x"0001";
+				if(count < 260480) then
+					V_COUNT <= V_COUNT + 1;
 				end if;
 			end if;
 
-			--if(H_COUNT = x"1")	-- less than 193
-			--then h_sync <= '1';
-			--else h_sync <= '0';
-			--end if;
 		end if;
 	end process;
 end behavior;
