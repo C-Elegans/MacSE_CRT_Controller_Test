@@ -42,11 +42,12 @@ port(
 end component;
 
 signal	dot_clock:	std_logic;
+signal	clock_divider:	std_logic;
+signal	clock_counter:	std_logic_vector(19 downto 0):= X"00001";
 signal	count:		std_logic_vector(19 downto 0) := X"00001";
 signal	count_quick_test:	std_logic_vector(19 downto 0) := X"00001";
 signal	outglob:	std_logic;
 signal 	outres:		std_logic := '1';
-signal	newFrame:	std_logic := '1';
 
 signal  V_COUNT:	std_logic_vector(15 downto 0) := x"0001";
 signal  H_COUNT:	std_logic_vector(15 downto 0) := x"0001";
@@ -60,28 +61,34 @@ port map(
 	PLLOUTGLOBAL => outglob,
 	RESET => outres);
 
-	-- signal to begin the next frame
-	newFrame	<= '1' when count = std_logic_vector(to_unsigned(8,count'length))
-				else '0';
-
 	h_sync		<= '0' when (H_COUNT <= (h_vid_offset + h_vid_after_length) and H_COUNT >= (h_offset+1))
 				else '1';
-
---	video	 <= '1' when count_quick_test = param_quick_num+1
---			else '0';
-
-	video		<= CLK_IN;
 
 	v_sync		<= '0' when (V_COUNT >= x"1" and V_COUNT <= vid_offset)	
 				else '1';
 
-	--h_sync <= '0';
-	--v_sync <= '0';
-	--video <= '0';
+	video		<= clock_divider;
+
+	clock_divider	<= '0' when (clock_counter >= X"00005")
+				else '1';
 
 	process(dot_clock)
 	begin
-		if (rising_edge(dot_clock)) then
+		-- implement clock divider
+		if( clock_counter /= X"00009") then
+			if(rising_edge(dot_clock)) then clock_counter <= clock_counter + X"00001"; end if;
+		end if;
+
+		if (clock_counter = X"00009" and rising_edge(dot_clock)) then
+			clock_counter <= X"00001"; 
+		end if;
+		
+	end process;
+
+	process(clock_divider)
+	begin
+		-- crt screen logic
+		if (rising_edge(clock_divider)) then
 			count_quick_test <= count_quick_test + 1;
 
 			if(count < total_dots)
