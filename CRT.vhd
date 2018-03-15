@@ -43,7 +43,6 @@ end component;
 
 signal	dot_clock:	std_logic;
 signal	count:		std_logic_vector(19 downto 0) := X"00001";
-signal	count_quick_test:	std_logic_vector(19 downto 0) := X"00001";
 signal	outglob:	std_logic;
 signal 	outres:		std_logic := '1';
 signal	newFrame:	std_logic := '1';
@@ -67,8 +66,6 @@ port map(
 	h_sync		<= '0' when (H_COUNT <= (h_vid_offset + h_vid_after_length) and H_COUNT >= (h_offset+1))
 				else '1';
 
---	video	 <= '1' when count_quick_test = param_quick_num+1
---			else '0';
 
 	video		<= CLK_IN;
 
@@ -82,7 +79,6 @@ port map(
 	process(dot_clock)
 	begin
 		if (rising_edge(dot_clock)) then
-			count_quick_test <= count_quick_test + 1;
 
 			if(count < total_dots)
 			then count <= count + 1;
