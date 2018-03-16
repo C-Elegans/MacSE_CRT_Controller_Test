@@ -44,7 +44,7 @@ end component;
 
 signal	dot_clock:	std_logic;
 signal	clock_divider:	std_logic;
-signal	clock_counter:	std_logic_vector(19 downto 0):= X"00001";
+signal	clock_counter:	std_logic_vector(3 downto 0):= X"1";
 signal	count:		std_logic_vector(19 downto 0) := X"00001";
 signal	count_quick_test:	std_logic_vector(19 downto 0) := X"00001";
 signal	outglob:	std_logic;
@@ -75,15 +75,13 @@ port map(
 
 	process(dot_clock)
 	begin
-		-- implement clock divider
-		if( clock_counter /= X"00009") then
-			if(rising_edge(dot_clock)) then clock_counter <= clock_counter + X"00001"; end if;
-		end if;
-
-		if (clock_counter = X"00009" and rising_edge(dot_clock)) then
-			clock_counter <= X"00001"; 
-		end if;
-		
+                if(rising_edge(dot_clock)) then
+                        if(clock_counter = X"00008") then
+                                clock_counter <= X"0";
+                        else
+                                clock_counter <= clock_counter + X"1";
+                        end if;
+                end if;
 	end process;
 
 	process(clock_divider)
