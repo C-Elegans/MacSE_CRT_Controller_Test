@@ -1,10 +1,11 @@
+
 LIBRARY IEEE;
 use ieee.numeric_std.all;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.STD_LOGIC_ARITH.ALL;
 USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-ENTITY CRT is
+ENTITY CRT is 
 	GENERIC(
 	--	Horizontal Parameters
 		h_pixels	: integer := 704; -- horizontal length
@@ -42,10 +43,12 @@ port(
 end component;
 
 signal	dot_clock:	std_logic;
+signal	clock_divider:	std_logic;
+signal	clock_counter:	std_logic_vector(19 downto 0):= X"00001";
 signal	count:		std_logic_vector(19 downto 0) := X"00001";
+signal	count_quick_test:	std_logic_vector(19 downto 0) := X"00001";
 signal	outglob:	std_logic;
 signal 	outres:		std_logic := '1';
-signal	newFrame:	std_logic := '1';
 
 signal  V_COUNT:	std_logic_vector(15 downto 0) := x"0001";
 signal  H_COUNT:	std_logic_vector(15 downto 0) := x"0001";
@@ -59,42 +62,56 @@ port map(
 	PLLOUTGLOBAL => outglob,
 	RESET => outres);
 
-	-- signal to begin the next frame
-	newFrame	<= '1' when count = "0000" & X"08"
-				else '0';
-
 	h_sync		<= '0' when (H_COUNT <= (h_vid_offset + h_vid_after_length) and H_COUNT >= (h_offset+1))
 				else '1';
-
-
-	video		<= CLK_IN;
 
 	v_sync		<= '0' when (V_COUNT >= x"1" and V_COUNT <= vid_offset)	
 				else '1';
 
+	video		<= clock_divider;
+
+	clock_divider	<= '0' when (clock_counter >= X"00005")
+				else '1';
 
 	process(dot_clock)
 	begin
-		if (rising_edge(dot_clock)) then
-			-- If we've sent all the pixels in the frame,
-			-- reset counter
-			if(count < total_dots) then
-				count <= count + 1;
-			else
-				count <= X"00001";
-				V_COUNT <= x"0001";
+		-- implement clock divider
+		if( clock_counter /= X"00009") then
+			if(rising_edge(dot_clock)) then clock_counter <= clock_counter + X"00001"; end if;
+		end if;
+
+		if (clock_counter = X"00009" and rising_edge(dot_clock)) then
+			clock_counter <= X"00001"; 
+		end if;
+		
+	end process;
+
+	process(clock_divider)
+	begin
+		-- crt screen logic
+		if (rising_edge(clock_divider)) then
+			count_quick_test <= count_quick_test + 1;
+
+			if(count < total_dots)
+			then count <= count + 1;
+			else 
+			count <= X"00001";
+			V_COUNT <= x"0001";
 			end if;
 
-			-- we've scanned 704 horizontal dots -- 02c0
-			if(H_COUNT < h_pixels)	
+			if(H_COUNT < h_pixels)	-- we've scanned 704 horizontal dots -- 02c0
 			then H_COUNT <= H_COUNT + 1;
-			else
-				H_COUNT <= x"0001";
-				if(count < 260480) then
-					V_COUNT <= V_COUNT + 1;
+			else 
+			H_COUNT <= x"0001";
+				if(count < 260480)
+				then V_COUNT <= V_COUNT + 1;
 				end if;
 			end if;
 
+			--if(H_COUNT = x"1")	-- less than 193
+			--then h_sync <= '1';
+			--else h_sync <= '0';
+			--end if;
 		end if;
 	end process;
 end behavior;
