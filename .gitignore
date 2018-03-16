@@ -6,3 +6,4 @@ Simulate/*
 *.ghw
 top_tb
 *.vim
+*.DS_Store
