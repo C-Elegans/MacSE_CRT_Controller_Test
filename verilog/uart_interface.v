@@ -80,6 +80,18 @@ module uart_interface(/*AUTOARG*/
 	      S_IDLE: 
 		  if(uart_data_stb) begin
 		      if( uart_data != 'h0a) begin
+			  if(row == NUM_COLS - 1) begin
+			      row <= 0;
+			      ram_addr <= 0;
+			      col <= 0;
+			  end
+			  else begin
+			      col <= 0;
+			      ram_addr <= ram_addr + (NUM_COLS - col);
+			      row <= row + 1;
+			  end // else: !if(row == NUM_COLS - 1)
+			  
+			    
 		      end
 		      else begin
 			  col <= col + 1;
@@ -131,13 +143,28 @@ module uart_interface(/*AUTOARG*/
 	if(!rst) begin
 	    assert(col < NUM_COLS);
 	    assert(row < NUM_ROWS);
-	    if($past(uart_data_stb) && $past(state) == S_IDLE)
-	      assert(state == S_RX);
 	    if(state == S_IDLE) begin
 		assert(ram_addr == row * NUM_COLS + col);
 	    end
+
+	    // Assert that state transitions work
+	    if($past(uart_data_stb) && $past(state) == S_IDLE)
+	      assert(state == S_RX);
+	    if($past(state) == S_RX)
+	      assert(state == S_IDLE);
+
+	    // Make sure ram_stb is let up for at least a cycle
+	    if($past(ram_stb))
+	      assert(!ram_stb);
+
+	    if(uart_data_stb)
+	      assume($past(uart_data_stb) == 0 && $past(uart_data_stb,2) == 0);
+	    if(uart_data_stb)
+	      assert(state == S_IDLE);
+	    assert(state == S_IDLE || state == S_RX);
 	    
 	end
+
     end // always @ (posedge clk)
     
 
