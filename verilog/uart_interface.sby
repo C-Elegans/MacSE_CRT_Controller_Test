@@ -1,0 +1,13 @@
+
+[options]
+mode prove
+
+[engines]
+smtbmc yices
+
+[script]
+read_verilog -formal uart_interface.v
+prep -top uart_interface
+
+[files]
+uart_interface.v
